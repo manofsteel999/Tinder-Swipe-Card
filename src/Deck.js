@@ -18,6 +18,7 @@ const SWIPE_OUT_DURATION = 250;
 const Deck = (props) => {
 	const [index, setIndex] = useState(1);
 
+	// Code snippet to hide that useNAtiveDriver error message
 	useEffect(() => {
 		LogBox.ignoreLogs(["Animated: `useNativeDriver`"]);
 	}, []);
@@ -35,10 +36,10 @@ const Deck = (props) => {
 	};
 
 	const renderCard = ({ item }) => {
-		console.log("Item is " + item.id);
+		// console.log("Item is " + item.id);
 		console.log("Index state is " + index);
 		if (index >= props.data.length) {
-			return props.renderNoMoreCards();
+			return props.renderNoMoreCards;
 		}
 		if (item.id < index) {
 			return null;
@@ -69,18 +70,20 @@ const Deck = (props) => {
 		}
 
 		return (
-			<Card>
-				<Card.Title>{item.text}</Card.Title>
-				<Card.Image source={{ uri: item.uri }}></Card.Image>
-				<Text style={{ marginBottom: 10, marginTop: 10 }}>
-					I can customize this card further
-				</Text>
-				<Button
-					icon={{ name: "code" }}
-					backgroundColor="#03A9F4"
-					title="View Now!"
-				/>
-			</Card>
+			<Animated.View style={[styles.cardStyle, { top: 10 * item.id }]}>
+				<Card>
+					<Card.Title>{item.text}</Card.Title>
+					<Card.Image source={{ uri: item.uri }}></Card.Image>
+					<Text style={{ marginBottom: 10, marginTop: 10 }}>
+						I can customize this card further
+					</Text>
+					<Button
+						icon={{ name: "code" }}
+						backgroundColor="#03A9F4"
+						title="View Now!"
+					/>
+				</Card>
+			</Animated.View>
 		);
 	};
 
@@ -90,7 +93,7 @@ const Deck = (props) => {
 		PanResponder.create({
 			onStartShouldSetPanResponder: () => true,
 			onPanResponderMove: (event, gestureState) => {
-				console.log(gestureState);
+				// console.log(gestureState);
 				position.setValue({ x: gestureState.dx, y: gestureState.dy });
 			},
 			onPanResponderRelease: (event, gestureState) => {
@@ -121,7 +124,7 @@ const Deck = (props) => {
 		// const item = props.data[index];
 		// direction === "right" ? onSwipeRight(item) : onSwipeLeft(item);
 		position.setValue({ x: 0, y: 0 });
-		setIndex(index + 1);
+		setIndex((currentIndex) => currentIndex + 1);
 	};
 	// Func. to reset the card to its default position if its not swiped left/right
 	const resetPosition = () => {
@@ -135,6 +138,7 @@ const Deck = (props) => {
 			<FlatList
 				data={props.data}
 				keyExtractor={(card) => card.id.toString()}
+				inverted={true}
 				renderItem={renderCard}
 			/>
 		</View>
@@ -146,6 +150,10 @@ const styles = StyleSheet.create({
 		//	margin: 40,
 		marginTop: 30,
 		//	flex: 1,
+	},
+	cardStyle: {
+		position: "absolute",
+		width: SCREEN_WIDTH,
 	},
 });
 
